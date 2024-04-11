@@ -1,1 +1,0 @@
-type IColorModeTuple = [string, string];

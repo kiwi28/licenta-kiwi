@@ -1,9 +1,15 @@
 "use client";
+import Image from "next/image";
+import Link from "next/link";
+
+import { User as IUser } from "firebase/auth";
+// import { IUser } from "@/lib/types/types";
+
 import {
+	Box,
 	Button,
 	Flex,
 	IconButton,
-	Image,
 	Input,
 	InputGroup,
 	InputLeftElement,
@@ -15,12 +21,13 @@ import {
 	ModalBody,
 	ModalContent,
 	ModalOverlay,
+	Text,
 	useColorMode,
 	useColorModeValue,
 	useDisclosure,
 	useMediaQuery,
 } from "@chakra-ui/react";
-import { Link } from "@chakra-ui/next-js";
+// import { Link } from "@chakra-ui/next-js";
 import {
 	AddIcon,
 	HamburgerIcon,
@@ -28,15 +35,27 @@ import {
 	SearchIcon,
 	SunIcon,
 } from "@chakra-ui/icons";
+
 import {
 	CM_BUTTON_CONTRAST,
+	CM_BUTTON_MAIN,
 	CM_HEADER,
 	CM_INPUT,
 	CM_LAYOUT,
 	CM_TEXT,
 } from "@/constants";
+import { useUserDataCtx } from "@/lib/hooks";
+
+import { SignInButton, SignOutButton } from "@/components/Auth";
 
 export const Header: React.FC = () => {
+	const { toggleColorMode } = useColorMode();
+	const { user, username } = useUserDataCtx();
+
+	const btnBg = useColorModeValue(...CM_BUTTON_CONTRAST);
+	const btnColor = useColorModeValue(...CM_TEXT);
+	const darkModeIcon = useColorModeValue(<MoonIcon />, <SunIcon />);
+
 	const [isDesktop] = useMediaQuery("(min-width: 768px)");
 
 	return (
@@ -61,6 +80,7 @@ export const Header: React.FC = () => {
 						src="/vercel.svg"
 						alt="Vercel Logo"
 						height={8}
+						width={32}
 					/>
 				</Link>
 			</Flex>
@@ -76,105 +96,130 @@ export const Header: React.FC = () => {
 				flexGrow={1}
 				gap={4}
 			>
-				{isDesktop ? (
-					<HeaderDesktopButtons isUser={true} />
-				) : (
-					<HeaderMobileButtons isUser={true} />
-				)}
-			</Flex>
-		</Flex>
-	);
-};
-interface HeaderButtonsProps {
-	isUser: boolean;
-}
-const HeaderDesktopButtons: React.FC<HeaderButtonsProps> = ({ isUser }) => {
-	const { toggleColorMode } = useColorMode();
-	const btnBg = useColorModeValue(...CM_BUTTON_CONTRAST);
-	const btnColor = useColorModeValue(...CM_TEXT);
-
-	return (
-		<>
-			{isUser ? (
-				<>
+				{isDesktop && (
 					<Button
-						// colorScheme="teal"
 						backgroundColor={btnBg}
 						color={btnColor}
 						leftIcon={<AddIcon color={btnColor} />}
 					>
 						New Post
 					</Button>
-					<Button
-						color={btnColor}
-						background={"transparent"}
-					>
-						Log Out
-					</Button>
-				</>
-			) : (
-				<>
-					<Button>Log In</Button>
-					<Button>Register</Button>
-				</>
-			)}
-			<IconButton
-				aria-label="toggle color mode"
-				background={"transparent"}
-				icon={useColorModeValue(<MoonIcon />, <SunIcon />)}
-				onClick={toggleColorMode}
-			/>
-		</>
-	);
-};
-
-const HeaderMobileButtons: React.FC<HeaderButtonsProps> = ({ isUser }) => {
-	const { toggleColorMode } = useColorMode();
-	const btnBg = useColorModeValue(...CM_BUTTON_CONTRAST);
-	const btnColor = useColorModeValue(...CM_TEXT);
-
-	const [isDesktop] = useMediaQuery("(min-width: 768px)");
-	console.log("isDesktop", isDesktop);
-	return (
-		<Menu>
-			<MenuButton>
-				<HamburgerIcon
-					h={8}
-					w={8}
-				/>
-			</MenuButton>
-			<MenuList backgroundColor={useColorModeValue(...CM_LAYOUT)}>
-				<MenuItem background={"transparent"}>
+				)}
+				{user && username ? (
+					<HeaderMobileButtons
+						user={user}
+						username={username}
+					/>
+				) : (
+					<SignInButton />
+				)}
+				{isDesktop && (
 					<IconButton
 						aria-label="toggle color mode"
 						background={"transparent"}
-						icon={useColorModeValue(<MoonIcon />, <SunIcon />)}
+						icon={darkModeIcon}
 						onClick={toggleColorMode}
+						fontSize={"2xl"}
 					/>
+				)}
+			</Flex>
+		</Flex>
+	);
+};
+
+interface UserAvatarButtonProps {
+	user: IUser;
+	username: string;
+}
+
+const UserAvatarButton: React.FC<UserAvatarButtonProps> = ({
+	user,
+	username,
+}) => {
+	return (
+		<Box>
+			<Image
+				src={user?.photoURL || ""}
+				alt={username || "user_profile_image"}
+				height={40}
+				width={40}
+				style={{ borderRadius: "50%", border: "2px solid white" }}
+			/>
+		</Box>
+	);
+};
+
+interface HeaderButtonsProps {
+	user: IUser;
+	username: string;
+}
+
+const HeaderMobileButtons: React.FC<HeaderButtonsProps> = ({
+	user,
+	username,
+}) => {
+	const { toggleColorMode } = useColorMode();
+	const btnBg = useColorModeValue(...CM_BUTTON_MAIN);
+	const btnColor = useColorModeValue(...CM_TEXT);
+	const darkModeIcon = useColorModeValue(<MoonIcon />, <SunIcon />);
+
+	const [isDesktop] = useMediaQuery("(min-width: 768px)");
+
+	return (
+		<Menu>
+			<MenuButton>
+				{isDesktop ? (
+					<UserAvatarButton
+						username={username}
+						user={user}
+					/>
+				) : (
+					<IconButton
+						fontSize={"4xl"}
+						aria-label="user profile"
+						icon={<HamburgerIcon />}
+						background={"transparent"}
+					/>
+				)}
+			</MenuButton>
+			<MenuList backgroundColor={useColorModeValue(...CM_LAYOUT)}>
+				<MenuItem>
+					<Text>{username}</Text>
 				</MenuItem>
-				{isUser ? (
-					<>
-						<MenuItem background={"transparent"}>
+				<MenuItem background={"transparent"}>
+					{isDesktop ? (
+						<Link href={username}>
 							<Button
 								backgroundColor={btnBg}
 								color={btnColor}
 								leftIcon={<AddIcon color={btnColor} />}
 							>
-								New Post
+								My Profile
 							</Button>
-						</MenuItem>
-						<MenuItem
-							color={btnColor}
+						</Link>
+					) : (
+						<UserAvatarButton
+							username={username}
+							user={user}
+						/>
+					)}
+				</MenuItem>
+
+				<MenuItem
+					color={btnColor}
+					background={"transparent"}
+				>
+					<SignOutButton />
+				</MenuItem>
+				{!isDesktop && (
+					<MenuItem background={"transparent"}>
+						<IconButton
+							aria-label="toggle color mode"
 							background={"transparent"}
-						>
-							Log Out
-						</MenuItem>
-					</>
-				) : (
-					<>
-						<MenuItem background={"transparent"}>Log In</MenuItem>
-						<MenuItem background={"transparent"}>Register</MenuItem>
-					</>
+							icon={darkModeIcon}
+							onClick={toggleColorMode}
+						/>
+					</MenuItem>
 				)}
 			</MenuList>
 		</Menu>
@@ -228,3 +273,43 @@ const SearchBar: React.FC = () => {
 		</>
 	);
 };
+
+// const HeaderDesktopButtons: React.FC<HeaderButtonsProps> = ({ isUser }) => {
+// 	const { toggleColorMode } = useColorMode();
+// 	const btnBg = useColorModeValue(...CM_BUTTON_CONTRAST);
+// 	const btnColor = useColorModeValue(...CM_TEXT);
+
+// 	return (
+// 		<>
+// 			{isUser ? (
+// 				<>
+// 					<Button
+// 						// colorScheme="teal"
+// 						backgroundColor={btnBg}
+// 						color={btnColor}
+// 						leftIcon={<AddIcon color={btnColor} />}
+// 					>
+// 						New Post
+// 					</Button>
+// 					<Button
+// 						color={btnColor}
+// 						background={"transparent"}
+// 					>
+// 						Log Out
+// 					</Button>
+// 				</>
+// 			) : (
+// 				<>
+// 					<Button>Log In</Button>
+// 					<Button>Register</Button>
+// 				</>
+// 			)}
+// 			<IconButton
+// 				aria-label="toggle color mode"
+// 				background={"transparent"}
+// 				icon={useColorModeValue(<MoonIcon />, <SunIcon />)}
+// 				onClick={toggleColorMode}
+// 			/>
+// 		</>
+// 	);
+// };

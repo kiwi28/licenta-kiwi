@@ -1,3 +1,5 @@
+import { IColorModeTuple } from "./lib/types/types";
+
 export const CM_INPUT: IColorModeTuple = ["teal.50", "teal.800"];
 // export const CM_TEXT: IColorModeTuple = ["black", "white"];
 export const CM_TEXT: IColorModeTuple = ["blackAlpha.800", "white"];
