@@ -47,10 +47,12 @@ import {
 import { useUserDataCtx } from "@/lib/hooks";
 
 import { SignInButton, SignOutButton } from "@/components/Auth";
+import { ArticleCreate } from "./ArticleCreate";
 
 export const Header: React.FC = () => {
 	const { toggleColorMode } = useColorMode();
 	const { user, username } = useUserDataCtx();
+	const { isOpen, onOpen, onClose } = useDisclosure();
 
 	const btnBg = useColorModeValue(...CM_BUTTON_CONTRAST);
 	const btnColor = useColorModeValue(...CM_TEXT);
@@ -59,71 +61,78 @@ export const Header: React.FC = () => {
 	const [isDesktop] = useMediaQuery("(min-width: 768px)");
 
 	return (
-		<Flex
-			as="header"
-			p={6}
-			w={"100%"}
-			alignItems={"center"}
-			position={"fixed"}
-			backgroundColor={useColorModeValue(...CM_HEADER)}
-			// backgroundColor={"teal.700"}
-			zIndex={100}
-			backdropFilter="saturate(180%) blur(10px)"
-		>
+		<>
 			<Flex
-				flexGrow={1}
-				justifyContent={"flex-end"}
+				as="header"
+				p={6}
+				w={"100%"}
 				alignItems={"center"}
+				position={"fixed"}
+				backgroundColor={useColorModeValue(...CM_HEADER)}
+				// backgroundColor={"teal.700"}
+				zIndex={100}
+				backdropFilter="saturate(180%) blur(10px)"
 			>
-				<Link href={"/"}>
-					<Image
-						src="/vercel.svg"
-						alt="Vercel Logo"
-						height={8}
-						width={32}
-					/>
-				</Link>
+				<Flex
+					flexGrow={1}
+					justifyContent={"flex-end"}
+					alignItems={"center"}
+				>
+					<Link href={"/"}>
+						<Image
+							src="/vercel.svg"
+							alt="Vercel Logo"
+							height={8}
+							width={32}
+						/>
+					</Link>
+				</Flex>
+				<Flex
+					alignItems={"center"}
+					flexGrow={2}
+					px={4}
+				>
+					<SearchBar />
+				</Flex>
+				<Flex
+					alignItems={"center"}
+					flexGrow={1}
+					gap={4}
+				>
+					{isDesktop && (
+						<Button
+							backgroundColor={btnBg}
+							color={btnColor}
+							leftIcon={<AddIcon color={btnColor} />}
+							onClick={onOpen}
+						>
+							New Post
+						</Button>
+					)}
+					{user && username ? (
+						<HeaderMobileButtons
+							user={user}
+							username={username}
+						/>
+					) : (
+						<SignInButton />
+					)}
+					{isDesktop && (
+						<IconButton
+							aria-label="toggle color mode"
+							background={"transparent"}
+							icon={darkModeIcon}
+							onClick={toggleColorMode}
+							fontSize={"2xl"}
+						/>
+					)}
+				</Flex>
 			</Flex>
-			<Flex
-				alignItems={"center"}
-				flexGrow={2}
-				px={4}
-			>
-				<SearchBar />
-			</Flex>
-			<Flex
-				alignItems={"center"}
-				flexGrow={1}
-				gap={4}
-			>
-				{isDesktop && (
-					<Button
-						backgroundColor={btnBg}
-						color={btnColor}
-						leftIcon={<AddIcon color={btnColor} />}
-					>
-						New Post
-					</Button>
-				)}
-				{user && username ? (
-					<HeaderMobileButtons
-						user={user}
-						username={username}
-					/>
-				) : (
-					<SignInButton />
-				)}
-				{isDesktop && (
-					<IconButton
-						aria-label="toggle color mode"
-						background={"transparent"}
-						icon={darkModeIcon}
-						onClick={toggleColorMode}
-						fontSize={"2xl"}
-					/>
-				)}
-			</Flex>
-		</Flex>
+			<ArticleCreate
+				isOpen={isOpen}
+				onClose={onClose}
+			/>
+		</>
 	);
 };
 

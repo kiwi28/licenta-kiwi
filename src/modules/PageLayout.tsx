@@ -1,5 +1,4 @@
 "use client";
-import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
 import { Box, VStack, useColorModeValue } from "@chakra-ui/react";
@@ -8,6 +7,7 @@ import { Header } from "./Header";
 
 import { CM_LAYOUT, CM_TEXT } from "@/constants";
 import { useUserDataCtx } from "@/lib/hooks";
+import { Loader } from "@/components";
 
 export const PageLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
 	const pathName = usePathname();
@@ -22,11 +22,11 @@ export const PageLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
 	const txtColor = useColorModeValue(...CM_TEXT);
 	const layoutColor = useColorModeValue(...CM_LAYOUT);
 
+	if (isLoadingUser) {
+		return <Loader />;
+	}
+
 	return (
-		// <>
-		// 	{loading ? (
-		// 		<Loader />
-		// 	) : (
 		<VStack
 			w={"100%"}
 			alignItems={"flex-start"}
@@ -43,7 +43,5 @@ export const PageLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
 				{children}
 			</Box>
 		</VStack>
-		// 	)}
-		// </>
 	);
 };

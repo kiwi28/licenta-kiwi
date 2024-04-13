@@ -5,15 +5,13 @@ import { useAuthState } from "react-firebase-hooks/auth";
 
 import { auth, db } from "./firebase";
 import { UserContext } from "./context";
-import { set } from "lodash";
-// import { IUser } from "@/lib/types/types";
 
 export const useUserDataCtx = () => useContext(UserContext);
 
 export const useUserDataFireBase = () => {
+	const [isLoadingUser, setIsLoadingUser] = useState<boolean>(true);
 	const [user] = useAuthState(auth);
 	const [username, setUsername] = useState<string | null>(null);
-	const [isLoadingUser, setIsLoadingUser] = useState<boolean>(true);
 	// const [userDocData, setUserDocData] = useState<IUser | null>(null);
 
 	useEffect(() => {
@@ -26,8 +24,8 @@ export const useUserDataFireBase = () => {
 			});
 		} else {
 			setUsername(null);
+			setIsLoadingUser(false);
 		}
-		setIsLoadingUser(false);
 
 		return unsubscribe;
 	}, [user]);
