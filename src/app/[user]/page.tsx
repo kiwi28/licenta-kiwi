@@ -1,64 +1,52 @@
-import {
-	getDocs,
-	limit,
-	orderBy,
-	where,
-	query,
-	collection,
-} from "firebase/firestore";
-// import PostFeed from "../../components/PostFeed";
-// import UserProfile from "../../components/UserProfile";
+"use client";
+import { useEffect, useState } from "react";
+
+import { getDocs, orderBy, query, collection } from "firebase/firestore";
+
 import { auth, db, getUserWithUsername, postToJson } from "../../lib/firebase";
-// import { Post, PostWFB, User } from "@/lib/types";
-
-// export async function getServerSideProps(props) {
-// 	const { username } = props.query;
-
-// 	const userDoc = await getUserWithUsername(username);
-// 	const uid = userDoc.id;
-
-// 	let user: Partial<User>;
-// 	let posts: PostWFB[];
-
-// 	if (userDoc) {
-// 		user = userDoc.data();
-// 		const postsQuery = query(
-// 			collection(db, "users", uid, "posts"),
-// 			where("published", "==", true),
-// 			orderBy("createdAt", "desc")
-// 		);
-
-// 		posts = (await getDocs(postsQuery)).docs.map(postToJson);
-
-// 		return {
-// 			props: {
-// 				user,
-// 				posts,
-// 				uid,
-// 			},
-// 		};
-// 	} else {
-// 		return {
-// 			notFound: true,
-// 		};
-// 	}
-// }
-
-// interface UserProfileProps {
-// 	user: IUser;
-// 	posts: IPost[];
-// 	uid: string;
-// }
+import { useUserDataCtx } from "@/lib/hooks";
+import { ArticlesFeed } from "@/modules/ArticlesFeed";
+import { IPost } from "@/lib/types/types";
+import { Box } from "@chakra-ui/react";
 
 export default function UserProfile() {
+	const [posts, setPosts] = useState<IPost[]>([]);
+	const [uid, setUid] = useState<string | null>(null);
+	const { username } = useUserDataCtx();
+
+	useEffect(() => {
+		async function getPosts() {
+			if (username) {
+				const userDoc = await getUserWithUsername(username);
+				const uid = userDoc.id;
+				setUid(uid);
+
+				// let user: Partial<User>;
+				// let posts: PostWFB[];
+
+				if (userDoc) {
+					const postsQuery = query(
+						collection(db, "users", uid, "posts"),
+						orderBy("published", "desc"),
+						orderBy("createdAt", "desc")
+					);
+
+					const posts = (await getDocs(postsQuery)).docs.map(postToJson);
+					setPosts(posts);
+				}
+			}
+		}
+		getPosts();
+	}, [username]);
+
+	console.log({ posts });
+
 	return (
-		<main>
-			{/* <UserProfile user={user} /> */}
-			{/* <PostFeed
+		<Box pb={32}>
+			<ArticlesFeed
 				posts={posts}
 				admin={uid == auth?.currentUser?.uid}
-			/> */}
-			postfeed
-		</main>
+			/>
+		</Box>
 	);
 }

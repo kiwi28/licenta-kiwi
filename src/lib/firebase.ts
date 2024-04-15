@@ -4,6 +4,7 @@ import firebase from "firebase/compat/app";
 import { initializeApp } from "firebase/app";
 import {
 	DocumentSnapshot,
+	Timestamp,
 	collection,
 	getDocs,
 	getFirestore,
@@ -46,16 +47,19 @@ export async function getUserWithUsername(username: string) {
 }
 
 export const postToJson = (doc: DocumentSnapshot) => {
-	const data = doc.data() as IPost;
-	console.log({ data });
+	const data = doc.data();
 	return {
-		...data,
-		createdAt: data?.createdAt.toMillis(),
-		updatedAt: data?.updatedAt.toMillis(),
+		imageURL: data?.imageURL as string,
+		content: data?.content as string,
+		heartCount: data?.heartCount as number,
+		published: data?.published as boolean,
+		slug: data?.slug as string,
+		title: data?.title as string,
+		uid: data?.uid as string,
+		username: data?.username as string,
+		createdAt: data?.createdAt.toMillis() as number,
+		updatedAt: data?.updatedAt.toMillis() as number,
 	};
 };
 
-export const fromMillis = firebase.firestore?.Timestamp.fromMillis;
-// export const serverTimestamp = firebase.firestore?.FieldValue.serverTimestamp;
-export const increment = firebase.firestore?.FieldValue.increment;
-export const fromDate = firebase.firestore?.Timestamp.fromDate;
+export const fromMillis = Timestamp.fromMillis;

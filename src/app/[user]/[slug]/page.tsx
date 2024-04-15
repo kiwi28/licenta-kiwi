@@ -1,85 +1,85 @@
-import { db, getUserWithUsername, postToJson } from "@/lib/firebase";
+"use client";
+import { useEffect, useState } from "react";
+
+import { useParams } from "next/navigation";
+import { doc, getDoc } from "firebase/firestore";
+
+import { db, getUserWithUsername } from "@/lib/firebase";
 import { IPost } from "@/lib/types/types";
-import { collectionGroup, doc, getDoc, getDocs } from "firebase/firestore";
 
-// export async function getStaticProps({ params }) {
-// 	const { username, slug } = params;
+import { Loader } from "@/components";
+import { Box, Heading, Image, useColorModeValue } from "@chakra-ui/react";
+import { CM_CARD } from "@/constants";
+import Markdown from "react-markdown";
 
-// 	const userDoc = await getUserWithUsername(username);
+export default function ArticlePage() {
+	const [article, setArticle] = useState<IPost | null>(null);
+	const [loading, setLoading] = useState<boolean>(false);
+	const [userUid, setUserUid] = useState<string | null>(null);
 
-// 	let post: IPost;
-// 	let path: string;
+	const params = useParams();
+	const username =
+		typeof params.user === "string" ? params.user : params.user[0];
+	const slug = typeof params.slug === "string" ? params.slug : params.slug[0];
 
-// 	if (userDoc) {
-// 		const postRef = doc(userDoc.ref, "posts", slug);
-// 		post = postToJson(await getDoc(postRef));
+	const bgColor = useColorModeValue(...CM_CARD);
 
-// 		path = postRef.path;
+	useEffect(() => {
+		setLoading(true);
+		const getUserData = async () => {
+			const userDoc = await getUserWithUsername(username);
+			setUserUid(userDoc.id);
+		};
+		getUserData().then(() => setLoading(false));
+	}, [username]);
 
-// 		return {
-// 			props: {
-// 				post,
-// 				path,
-// 			},
-// 			revalidate: 5000,
-// 		};
-// 	} else {
-// 		return {
-// 			notFound: true,
-// 		};
-// 	}
-// }
+	useEffect(() => {
+		if (userUid) {
+			const getArticleData = async () => {
+				setLoading(true);
+				const articleRef = doc(db, `users/${userUid}/posts/${slug}`);
+				const articleSnap = await getDoc(articleRef);
 
-// export async function getStaticPaths() {
-// 	const snapshot = await getDocs(collectionGroup(db, "posts"));
+				if (articleSnap.exists()) {
+					const article = articleSnap.data() as IPost;
+					setArticle(article);
+				}
+			};
+			getArticleData().then(() => setLoading(false));
+		}
+	}, [userUid, slug]);
 
-// 	const paths = snapshot.docs.map((doc) => {
-// 		const { slug, username } = doc.data();
+	if (loading) return <Loader />;
 
-// 		return {
-// 			params: { username, slug },
-// 		};
-// 	});
-
-// 	return {
-// 		paths,
-// 		fallback: "blocking",
-// 	};
-// }
-
-// interface PostPageProps {
-// 	post: IPost;
-// 	path: string;
-// }
-
-export default function PostPage(props: PostPageProps) {
-	const postRef = doc(db, props.path);
-	// const [realtime] = useDocumentData(postRef);
-
-	// const post = realtime || props.post;
+	console.log({ article });
 
 	return (
-		<main>
-			test
-			{/* <Metatags
-				title={post.title}
-				description={post.content}
-				image="https://picsum.photos/200"
-			/>
-
-			<section>
-				<PostContent post={post} />
-			</section>
-
-			<aside className="card">
-				<p>
-					<strong>{post.heartCount || 0} 🤍</strong>
-				</p>
-
-				<AuthCheck>
-					<HeartButton postRef={postRef} />
-				</AuthCheck>
-			</aside> */}
-		</main>
+		<Box
+			borderRadius={"md"}
+			backgroundColor={bgColor}
+			w={["90%", null, "44rem"]}
+			minW={80}
+			px={8}
+			py={4}
+		>
+			{article?.imageURL && (
+				<Image
+					mb={4}
+					width={"100%"}
+					height={"auto"}
+					src={article.imageURL}
+					alt={"cover image"}
+					borderRadius={"md"}
+				/>
+			)}
+			<Heading
+				as="h3"
+				fontSize="3xl"
+				mb={4}
+			>
+				{article?.title}
+			</Heading>
+			<Markdown>{article?.content}</Markdown>
+		</Box>
 	);
 }

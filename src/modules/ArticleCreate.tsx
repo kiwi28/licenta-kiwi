@@ -55,6 +55,7 @@ export const ArticleCreate: React.FC<ArticleCreateProps> = ({
 			slug,
 			uid,
 			username,
+			imageURL: "",
 			published: false,
 			content: "",
 			createdAt: serverTimestamp(),

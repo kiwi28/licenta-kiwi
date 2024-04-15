@@ -3,29 +3,43 @@
 import { CM_CARD, CM_VOTE } from "@/constants";
 import {
 	Box,
+	BoxProps,
+	Button,
 	Flex,
 	Heading,
-	Icon,
 	Image,
 	Text,
 	useColorModeValue,
 } from "@chakra-ui/react";
 
 import { UpvoteBorder, UpvotehFilled } from "@/components";
-import { ChatIcon } from "@chakra-ui/icons";
+import { IPost } from "@/lib/types/types";
+import Link from "next/link";
+import { EditIcon } from "@chakra-ui/icons";
 
-interface IArticleCardProps {
-	tags: string[];
+interface IArticleCardProps extends BoxProps {
+	article: IPost;
+	admin?: boolean;
 }
 
-export const ArticleCard: React.FC<IArticleCardProps> = ({ tags }) => {
+export const ArticleCard: React.FC<IArticleCardProps> = ({
+	article,
+	admin = false,
+}) => {
+	console.log(article);
 	return (
 		<Box
 			borderRadius={"md"}
 			backgroundColor={useColorModeValue(...CM_CARD)}
+			w={["90%", null, "44rem"]}
+			minW={80}
+			mb={8}
 		>
 			<Flex p={4}>
-				<Box pr={[0, null, 20]}>
+				<Box
+					pr={[0, null, 20]}
+					w={"100%"}
+				>
 					<Flex>
 						<Image
 							src="/avatar.webp"
@@ -41,28 +55,39 @@ export const ArticleCard: React.FC<IArticleCardProps> = ({ tags }) => {
 								aria-label="article author"
 								fontSize={"lg"}
 							>
-								Chivulescu Alexandru
+								{article.username}
 							</Text>
 							<Text
 								aria-label="date posted"
 								fontSize={"md"}
 							>
-								6 apr 2024
+								{
+									new Date(Number(article.updatedAt))
+										.toISOString()
+										.split("T")[0]
+								}
 							</Text>
 						</Box>
 					</Flex>
 					<Box pl={[0, null, 14]}>
-						<Heading
-							aria-label="article title"
-							as="h3"
-							size="xl"
-							py={8}
-						>
-							{
-								"Understanding Code Structure: A Beginner's Guide to Tree-sitter"
-							}
-						</Heading>
-						<Box>
+						<Link href={`/${article.username}/${article.slug}`}>
+							<Heading
+								aria-label="article title"
+								textShadow={article.imageURL ? "1px 1px 20px black" : "none"}
+								as="h3"
+								size="xl"
+								pl={article.imageURL ? 4 : 0}
+								py={article.imageURL ? 20 : 6}
+								background={
+									article.imageURL ? `url(${article.imageURL})` : "none"
+								}
+								backgroundPosition={"center"}
+								backgroundSize={"cover"}
+							>
+								{article.title}
+							</Heading>
+						</Link>
+						{/* <Box>
 							{tags.map((tag, idx) => (
 								<Text
 									fontSize={"sm"}
@@ -78,7 +103,7 @@ export const ArticleCard: React.FC<IArticleCardProps> = ({ tags }) => {
 									#{tag}
 								</Text>
 							))}
-						</Box>
+						</Box> */}
 						<Flex
 							flexWrap={"wrap"}
 							alignItems={"center"}
@@ -96,10 +121,25 @@ export const ArticleCard: React.FC<IArticleCardProps> = ({ tags }) => {
 									mr={2}
 								/>
 
-								<Text mr={1}>12</Text>
+								<Text mr={1}>{article.heartCount}</Text>
 								<Text>upvotes</Text>
 							</Flex>
-							<Flex
+							{admin && (
+								<>
+									<Link href={`/admin/${article.slug}`}>
+										<Button leftIcon={<EditIcon />}>Edit</Button>
+									</Link>
+									{!article.published && (
+										<Text
+											ml={2}
+											color={"orange"}
+										>
+											Not published
+										</Text>
+									)}
+								</>
+							)}
+							{/* <Flex
 								alignItems={"center"}
 								mr={4}
 								p={2}
@@ -113,7 +153,7 @@ export const ArticleCard: React.FC<IArticleCardProps> = ({ tags }) => {
 								/>
 								<Text mr={1}>12</Text>
 								<Text>comments</Text>
-							</Flex>
+							</Flex> */}
 						</Flex>
 					</Box>
 				</Box>

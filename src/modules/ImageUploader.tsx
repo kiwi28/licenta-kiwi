@@ -23,10 +23,17 @@ import {
 import { CopyIcon } from "@chakra-ui/icons";
 import { CM_INPUT } from "@/constants";
 
-export default function ImageUploader() {
+interface ImageUploaderProps {
+	downloadURL: string;
+	setDownloadURL: (url: string) => void;
+}
+
+export function ImageUploader({
+	downloadURL,
+	setDownloadURL,
+}: ImageUploaderProps) {
 	const [uploading, setUploading] = useState<boolean>(false);
 	const [progress, setProgress] = useState<number>(0);
-	const [downloadURL, setDonwloadURL] = useState<string | null>(null);
 
 	const inputBackground = useColorModeValue(...CM_INPUT);
 
@@ -65,7 +72,7 @@ export default function ImageUploader() {
 				getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
 					console.log("File available at", downloadURL);
 					setUploading(false);
-					setDonwloadURL(downloadURL);
+					setDownloadURL(downloadURL);
 				});
 			}
 		);

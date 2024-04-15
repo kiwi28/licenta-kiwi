@@ -197,7 +197,7 @@ const HeaderMobileButtons: React.FC<HeaderButtonsProps> = ({
 				</MenuItem>
 				<MenuItem background={"transparent"}>
 					{isDesktop ? (
-						<Link href={username}>
+						<Link href={`/${username}`}>
 							<Button
 								backgroundColor={btnBg}
 								color={btnColor}

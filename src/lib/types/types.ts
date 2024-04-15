@@ -1,5 +1,5 @@
 // import { User as IUser } from "firebase/auth";
-import { DocumentData } from "firebase/firestore";
+import { DocumentData, Timestamp } from "firebase/firestore";
 
 export type IColorModeTuple = [string, string];
 
@@ -11,15 +11,16 @@ export type IColorModeTuple = [string, string];
 // }
 
 export interface IPost {
+	imageURL: string;
 	content: string;
-	createdAt: Date;
 	heartCount: number;
 	published: boolean;
 	slug: string;
 	title: string;
 	uid: string;
-	updatedAt: Date;
 	username: string;
+	updatedAt: number;
+	createdAt: number;
 }
 
 // export interface PostWFB extends Post, DocumentData {}
