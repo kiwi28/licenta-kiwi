@@ -80,17 +80,13 @@ export default function Home() {
 	}
 
 	return (
-		<Flex
-			flexDirection={"column"}
-			alignItems={"center"}
-			pb={32}
-		>
+		<>
 			<ArticlesFeed posts={posts} />
 			{!initialLoad && !postsEnd && !!posts.length && (
 				<Button onClick={handleGetMorePosts}>Load more!</Button>
 			)}
 			{loading && <Spinner />}
 			{postsEnd && `You've reached the end!`}
-		</Flex>
+		</>
 	);
 }

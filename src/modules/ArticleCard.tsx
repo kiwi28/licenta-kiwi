@@ -8,7 +8,6 @@ import {
 	Button,
 	Flex,
 	Heading,
-	Image,
 	Text,
 	useColorModeValue,
 } from "@chakra-ui/react";
@@ -27,7 +26,6 @@ export const ArticleCard: React.FC<IArticleCardProps> = ({
 	article,
 	admin = false,
 }) => {
-	console.log(article.authorProfilePic);
 	return (
 		<Box
 			borderRadius={"md"}
@@ -49,15 +47,6 @@ export const ArticleCard: React.FC<IArticleCardProps> = ({
 							name={article.username}
 							src={article.authorProfilePic || "/avatar.webp"}
 						/>
-						{/* <Image
-							src={article.authorProfilePic || "/avatar.webp"}
-              imgProps
-							alt="avatar"
-							borderRadius={"xl"}
-							mr={4}
-							w={10}
-							h={10}
-						/> */}
 						<Box>
 							<Link href={`/${article.username}`}>
 								<Text
@@ -111,23 +100,6 @@ export const ArticleCard: React.FC<IArticleCardProps> = ({
 								</Heading>
 							</Flex>
 						</Link>
-						{/* <Box>
-							{tags.map((tag, idx) => (
-								<Text
-									fontSize={"sm"}
-									key={idx}
-									aria-label="tag"
-									display={"inline-block"}
-									// px={2}
-									// py={1}
-									// borderRadius={"md"}
-									// backgroundColor={"teal.200"}
-									mr={2}
-								>
-									#{tag}
-								</Text>
-							))}
-						</Box> */}
 						<Flex
 							flexWrap={"wrap"}
 							alignItems={"center"}
@@ -168,21 +140,6 @@ export const ArticleCard: React.FC<IArticleCardProps> = ({
 									)}
 								</Flex>
 							)}
-							{/* <Flex
-								alignItems={"center"}
-								mr={4}
-								p={2}
-								cursor={"pointer"}
-							>
-								<Icon
-									as={ChatIcon}
-									w={4}
-									h={4}
-									mr={2}
-								/>
-								<Text mr={1}>12</Text>
-								<Text>comments</Text>
-							</Flex> */}
 						</Flex>
 					</Box>
 				</Box>

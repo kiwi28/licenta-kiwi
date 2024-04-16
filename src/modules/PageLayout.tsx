@@ -1,7 +1,7 @@
 "use client";
 import { usePathname, useRouter } from "next/navigation";
 
-import { Box, VStack, useColorModeValue } from "@chakra-ui/react";
+import { Box, Flex, VStack, useColorModeValue } from "@chakra-ui/react";
 
 import { Header } from "./Header";
 
@@ -40,7 +40,14 @@ export const PageLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
 				pt={28}
 				px={["5vw", null, "15vw"]}
 			>
-				{children}
+				<Flex
+					flexDirection={"column"}
+					alignItems={"center"}
+					justifyContent={"center"}
+					pb={32}
+				>
+					{children}
+				</Flex>
 			</Box>
 		</VStack>
 	);

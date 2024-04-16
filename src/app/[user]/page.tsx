@@ -7,7 +7,6 @@ import { auth, db, getUserWithUsername, postToJson } from "../../lib/firebase";
 import { useUserDataCtx } from "@/lib/hooks";
 import { ArticlesFeed } from "@/modules/ArticlesFeed";
 import { IPost } from "@/lib/types/types";
-import { Box } from "@chakra-ui/react";
 
 export default function UserProfile() {
 	const [posts, setPosts] = useState<IPost[]>([]);
@@ -40,11 +39,9 @@ export default function UserProfile() {
 	}, [username]);
 
 	return (
-		<Box pb={32}>
-			<ArticlesFeed
-				posts={posts}
-				admin={uid == auth?.currentUser?.uid}
-			/>
-		</Box>
+		<ArticlesFeed
+			posts={posts}
+			admin={uid == auth?.currentUser?.uid}
+		/>
 	);
 }

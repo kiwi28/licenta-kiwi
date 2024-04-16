@@ -12,11 +12,7 @@ export const ArticlesFeed: React.FC<ArticlesFeedProps> = ({
 	admin = false,
 }) => {
 	return (
-		<Flex
-			flexDirection={"column"}
-			alignItems={"center"}
-			justifyContent={"center"}
-		>
+		<>
 			{posts.map((post, idx) => (
 				<ArticleCard
 					key={idx}
@@ -24,6 +20,6 @@ export const ArticlesFeed: React.FC<ArticlesFeedProps> = ({
 					admin={admin}
 				/>
 			))}
-		</Flex>
+		</>
 	);
 };
