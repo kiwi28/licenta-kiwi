@@ -52,7 +52,6 @@ export const ArticleEditor: React.FC = () => {
 
 			if (articleSnap.exists()) {
 				const article = articleSnap.data() as IPost;
-				console.log({ article });
 				setArticle(article);
 			}
 		};
@@ -97,7 +96,6 @@ export const ArticleEditor: React.FC = () => {
 	);
 
 	if (loading) return <Loader />;
-	// console.log({ article });
 
 	return (
 		<Box

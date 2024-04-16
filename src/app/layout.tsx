@@ -20,6 +20,10 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en">
+			<meta
+				name="referrer"
+				content="no-referrer"
+			/>
 			<body>
 				<ColorModeScript initialColorMode={theme.config.initialColorMode} />
 				<Providers>

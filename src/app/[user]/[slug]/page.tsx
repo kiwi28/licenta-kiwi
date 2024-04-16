@@ -51,8 +51,6 @@ export default function ArticlePage() {
 
 	if (loading) return <Loader />;
 
-	console.log({ article });
-
 	return (
 		<Box
 			borderRadius={"md"}

@@ -68,7 +68,7 @@ export default function Home() {
 		const querySnapPosts = await getDocs(postsQuery);
 		const newPosts: IPost[] = querySnapPosts.docs.map(postToJson);
 
-		setPosts(posts.concat(newPosts));
+		setPosts([...posts, ...newPosts]);
 		setLoading(false);
 		if (newPosts.length < LIMIT) {
 			setPostsEnd(true);

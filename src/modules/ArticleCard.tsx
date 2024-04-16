@@ -2,6 +2,7 @@
 
 import { CM_CARD, CM_VOTE } from "@/constants";
 import {
+	Avatar,
 	Box,
 	BoxProps,
 	Button,
@@ -26,7 +27,7 @@ export const ArticleCard: React.FC<IArticleCardProps> = ({
 	article,
 	admin = false,
 }) => {
-	console.log(article);
+	console.log(article.authorProfilePic);
 	return (
 		<Box
 			borderRadius={"md"}
@@ -41,26 +42,38 @@ export const ArticleCard: React.FC<IArticleCardProps> = ({
 					w={"100%"}
 				>
 					<Flex>
-						<Image
-							src="/avatar.webp"
+						<Avatar
+							h={10}
+							w={10}
+							mr={4}
+							name={article.username}
+							src={article.authorProfilePic || "/avatar.webp"}
+						/>
+						{/* <Image
+							src={article.authorProfilePic || "/avatar.webp"}
+              imgProps
 							alt="avatar"
 							borderRadius={"xl"}
 							mr={4}
 							w={10}
 							h={10}
-						/>
+						/> */}
 						<Box>
-							<Text
-								lineHeight={"none"}
-								aria-label="article author"
-								fontSize={"lg"}
-							>
-								{article.username}
-							</Text>
+							<Link href={`/${article.username}`}>
+								<Text
+									lineHeight={"none"}
+									aria-label="article author"
+									fontSize={"lg"}
+								>
+									@{article.username}
+								</Text>
+							</Link>
 							<Text
 								aria-label="date posted"
-								fontSize={"md"}
+								fontSize={"sm"}
 							>
+								{article.createdAt === article.updatedAt ? "Posted" : "Updated"}
+								{": "}
 								{
 									new Date(Number(article.updatedAt))
 										.toISOString()

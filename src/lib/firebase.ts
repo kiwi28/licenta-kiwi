@@ -49,7 +49,8 @@ export async function getUserWithUsername(username: string) {
 export const postToJson = (doc: DocumentSnapshot) => {
 	const data = doc.data();
 	return {
-		imageURL: data?.imageURL as string,
+		authorProfilePic: (data?.authorProfilePic as string) || "",
+		imageURL: (data?.imageURL as string) || "",
 		content: data?.content as string,
 		heartCount: data?.heartCount as number,
 		published: data?.published as boolean,

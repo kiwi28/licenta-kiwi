@@ -48,9 +48,11 @@ export const ArticleCreate: React.FC<ArticleCreateProps> = ({
 
 	const createPost = useCallback(async () => {
 		const uid = auth?.currentUser?.uid || "";
+		const authorProfilePic = auth?.currentUser?.photoURL || "";
 		const ref = doc(db, "users", uid, "posts", slug);
 
 		const data = {
+			authorProfilePic,
 			title,
 			slug,
 			uid,

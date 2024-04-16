@@ -11,6 +11,7 @@ export type IColorModeTuple = [string, string];
 // }
 
 export interface IPost {
+	authorProfilePic: string;
 	imageURL: string;
 	content: string;
 	heartCount: number;

@@ -39,8 +39,6 @@ export default function UserProfile() {
 		getPosts();
 	}, [username]);
 
-	console.log({ posts });
-
 	return (
 		<Box pb={32}>
 			<ArticlesFeed
