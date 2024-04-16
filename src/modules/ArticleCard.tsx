@@ -41,7 +41,7 @@ export const ArticleCard: React.FC<IArticleCardProps> = ({
 					pr={[0, null, 20]}
 					w={"100%"}
 				>
-					<Flex>
+					<Flex mb={4}>
 						<Avatar
 							h={10}
 							w={10}
@@ -84,21 +84,32 @@ export const ArticleCard: React.FC<IArticleCardProps> = ({
 					</Flex>
 					<Box pl={[0, null, 14]}>
 						<Link href={`/${article.username}/${article.slug}`}>
-							<Heading
-								aria-label="article title"
-								textShadow={article.imageURL ? "1px 1px 20px black" : "none"}
-								as="h3"
-								size="xl"
-								pl={article.imageURL ? 4 : 0}
-								py={article.imageURL ? 20 : 6}
+							<Flex
+								flexDir={"column"}
+								justifyContent={"flex-end"}
 								background={
 									article.imageURL ? `url(${article.imageURL})` : "none"
 								}
 								backgroundPosition={"center"}
 								backgroundSize={"cover"}
+								h={article.imageURL ? 48 : "none"}
+								mb={4}
+								role="group"
 							>
-								{article.title}
-							</Heading>
+								<Heading
+									aria-label="article title"
+									textShadow={article.imageURL ? "1px 1px 20px black" : "none"}
+									_groupHover={
+										article.imageURL ? { background: "rgba(0, 0, 0, 0.5)" } : {}
+									}
+									transition={"background 0.3s ease"}
+									as="h3"
+									pl={article.imageURL ? 4 : 0}
+									size="xl"
+								>
+									{article.title}
+								</Heading>
+							</Flex>
 						</Link>
 						{/* <Box>
 							{tags.map((tag, idx) => (
@@ -138,9 +149,14 @@ export const ArticleCard: React.FC<IArticleCardProps> = ({
 								<Text>upvotes</Text>
 							</Flex>
 							{admin && (
-								<>
+								<Flex>
 									<Link href={`/admin/${article.slug}`}>
-										<Button leftIcon={<EditIcon />}>Edit</Button>
+										<Button
+											ml={4}
+											leftIcon={<EditIcon />}
+										>
+											Edit
+										</Button>
 									</Link>
 									{!article.published && (
 										<Text
@@ -150,7 +166,7 @@ export const ArticleCard: React.FC<IArticleCardProps> = ({
 											Not published
 										</Text>
 									)}
-								</>
+								</Flex>
 							)}
 							{/* <Flex
 								alignItems={"center"}
