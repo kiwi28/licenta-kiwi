@@ -99,6 +99,8 @@ export const ArticleEditor: React.FC = () => {
 
 	return (
 		<Box
+			w={["90%", null, "44rem"]}
+			minW={80}
 			bgColor={bgColorLight}
 			px={8}
 			py={4}
