@@ -16,14 +16,12 @@ import {
 } from "@chakra-ui/react";
 import Markdown from "react-markdown";
 
-import { useDocumentData } from "react-firebase-hooks/firestore";
 import { doc, getDoc, serverTimestamp, updateDoc } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
 import { useParams } from "next/navigation";
 import { CM_CARD, CM_HEADER } from "@/constants";
 import { IPost } from "@/lib/types/types";
 import { Loader } from "@/components";
-import { set } from "lodash";
 
 export const ArticleEditor: React.FC = () => {
 	const [loading, setLoading] = useState<boolean>(false);
