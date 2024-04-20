@@ -13,8 +13,8 @@ import {
 } from "firebase/firestore";
 
 import { IPost } from "@/lib/types/types";
-import { ArticlesFeed } from "@/modules/ArticlesFeed";
-import { Button, Flex, Spinner } from "@chakra-ui/react";
+import { ArticlesFeed } from "@/modules";
+import { Button, Spinner } from "@chakra-ui/react";
 import { Loader } from "@/components";
 
 const LIMIT = 2;

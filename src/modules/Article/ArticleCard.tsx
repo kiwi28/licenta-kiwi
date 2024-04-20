@@ -1,6 +1,6 @@
 "use client";
 
-import { CM_CARD, CM_VOTE } from "@/constants";
+import { CM_CARD } from "@/constants";
 import {
 	Avatar,
 	Box,
@@ -12,7 +12,6 @@ import {
 	useColorModeValue,
 } from "@chakra-ui/react";
 
-import { UpvoteBorder, UpvotehFilled } from "@/components";
 import { IPost } from "@/lib/types/types";
 import Link from "next/link";
 import { EditIcon } from "@chakra-ui/icons";
@@ -73,24 +72,19 @@ export const ArticleCard: React.FC<IArticleCardProps> = ({ article, uid }) => {
 							<Flex
 								flexDir={"column"}
 								justifyContent={"flex-end"}
-								background={
-									article.imageURL ? `url(${article.imageURL})` : "none"
-								}
-								backgroundPosition={"center"}
-								backgroundSize={"cover"}
-								h={article.imageURL ? 48 : "none"}
-								mb={4}
-								role="group"
 							>
+								<Box
+									background={
+										article.imageURL ? `url(${article.imageURL})` : "none"
+									}
+									backgroundPosition={"center"}
+									backgroundSize={"cover"}
+									h={article.imageURL ? 48 : "none"}
+									mb={4}
+								/>
 								<Heading
 									aria-label="article title"
-									textShadow={article.imageURL ? "1px 1px 20px black" : "none"}
-									_groupHover={
-										article.imageURL ? { background: "rgba(0, 0, 0, 0.5)" } : {}
-									}
-									transition={"background 0.3s ease"}
 									as="h3"
-									pl={article.imageURL ? 4 : 0}
 									size="xl"
 								>
 									{article.title}
@@ -101,7 +95,7 @@ export const ArticleCard: React.FC<IArticleCardProps> = ({ article, uid }) => {
 							flexWrap={"wrap"}
 							alignItems={"center"}
 						>
-							<Flex
+							{/* <Flex
 								alignItems={"center"}
 								mr={4}
 								p={2}
@@ -116,17 +110,16 @@ export const ArticleCard: React.FC<IArticleCardProps> = ({ article, uid }) => {
 
 								<Text mr={1}>{article.heartCount}</Text>
 								<Text>upvotes</Text>
-							</Flex>
+							</Flex> */}
 							{uid && (
-								<Flex>
+								<Flex
+									mt={8}
+									alignItems={"center"}
+								>
 									<Link href={`/admin/${uid}/${article.slug}`}>
-										<Button
-											ml={4}
-											leftIcon={<EditIcon />}
-										>
-											Edit
-										</Button>
+										<Button leftIcon={<EditIcon />}>Edit</Button>
 									</Link>
+
 									{!article.published && (
 										<Text
 											ml={2}

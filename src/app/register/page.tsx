@@ -70,6 +70,7 @@ const UsernameForm = () => {
 				photoURL: user?.photoURL,
 				displayName: user?.displayName,
 				uid: user?.uid,
+				savedPosts: [],
 			});
 			batch.set(usernameDoc, { uid: user?.uid });
 

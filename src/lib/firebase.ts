@@ -1,5 +1,4 @@
 // Import the functions you need from the SDKs you need
-import firebase from "firebase/compat/app";
 
 import { initializeApp } from "firebase/app";
 import {
@@ -52,14 +51,13 @@ export const postToJson = (doc: DocumentSnapshot) => {
 		authorProfilePic: (data?.authorProfilePic as string) || "",
 		imageURL: (data?.imageURL as string) || "",
 		content: data?.content as string,
-		heartCount: data?.heartCount as number,
 		published: data?.published as boolean,
 		slug: data?.slug as string,
 		title: data?.title as string,
 		uid: data?.uid as string,
 		username: data?.username as string,
-		createdAt: data?.createdAt.toMillis() as number,
-		updatedAt: data?.updatedAt.toMillis() as number,
+		createdAt: data?.createdAt,
+		updatedAt: data?.updatedAt,
 	};
 };
 

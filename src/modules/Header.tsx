@@ -3,7 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { User as IUser } from "firebase/auth";
-// import { IUser } from "@/lib/types/types";
 
 import {
 	Box,
@@ -47,7 +46,7 @@ import {
 import { useUserDataCtx } from "@/lib/hooks";
 
 import { SignInButton, SignOutButton } from "@/components/Auth";
-import { ArticleCreate } from "./ArticleCreate";
+import { ArticleCreate } from "./Article/ArticleCreate";
 
 export const Header: React.FC = () => {
 	const { toggleColorMode } = useColorMode();

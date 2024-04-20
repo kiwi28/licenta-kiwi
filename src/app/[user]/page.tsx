@@ -5,8 +5,8 @@ import { getDocs, orderBy, query, collection } from "firebase/firestore";
 
 import { auth, db, getUserWithUsername, postToJson } from "../../lib/firebase";
 import { useUserDataCtx } from "@/lib/hooks";
-import { ArticlesFeed } from "@/modules/ArticlesFeed";
 import { IPost } from "@/lib/types/types";
+import { ArticlesFeed } from "@/modules";
 
 export default function UserProfile() {
 	const [posts, setPosts] = useState<IPost[]>([]);

@@ -1,3 +1,4 @@
+"use client";
 import { useCallback, useState } from "react";
 
 import { auth, db } from "@/lib/firebase";
@@ -47,32 +48,42 @@ export const ArticleCreate: React.FC<ArticleCreateProps> = ({
 	const isValid = title.length > 3 && title.length < 100;
 
 	const createPost = useCallback(async () => {
-		const uid = auth?.currentUser?.uid || "";
-		const authorProfilePic = auth?.currentUser?.photoURL || "";
-		const ref = doc(db, "users", uid, "posts", slug);
+		try {
+			const uid = auth?.currentUser?.uid || "";
+			const authorProfilePic = auth?.currentUser?.photoURL || "";
+			const ref = doc(db, "users", uid, "posts", slug);
 
-		const data = {
-			authorProfilePic,
-			title,
-			slug,
-			uid,
-			username,
-			imageURL: "",
-			published: false,
-			content: "",
-			createdAt: serverTimestamp(),
-			updatedAt: serverTimestamp(),
-			heartCount: 0,
-		};
+			const data = {
+				authorProfilePic,
+				title,
+				slug,
+				uid,
+				username,
+				imageURL: "",
+				published: false,
+				content: "",
+				createdAt: serverTimestamp(),
+				updatedAt: serverTimestamp(),
+			};
 
-		toast.promise(setDoc(ref, data), {
-			success: { title: "Promise resolved", description: "Post created!" },
-			error: { title: "Promise rejected", description: "Something wrong" },
-			loading: { title: "Promise pending", description: "Please wait" },
-		});
+			await setDoc(ref, data);
 
-		onClose();
-		router.push(`/admin/${uid}/${slug}`);
+			toast({
+				status: "success",
+				title: "Success",
+				description: "Post created!",
+			});
+			setTitle("");
+			onClose();
+			router.push(`/admin/${uid}/${slug}`);
+		} catch (e) {
+			console.log(e);
+			toast({
+				status: "error",
+				title: "Error",
+				description: "Error creating Article",
+			});
+		}
 	}, [slug, title, username, router, toast, onClose]);
 
 	const handleChangeTitle = useCallback(

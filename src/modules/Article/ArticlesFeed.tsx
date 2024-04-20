@@ -1,5 +1,4 @@
-import { Box, Flex } from "@chakra-ui/react";
-import { ArticleCard } from ".";
+import { ArticleCard } from "..";
 import { IPost } from "@/lib/types/types";
 
 interface ArticlesFeedProps {
