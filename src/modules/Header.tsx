@@ -184,6 +184,7 @@ const HeaderMobileButtons: React.FC<HeaderButtonsProps> = ({
 					/>
 				) : (
 					<IconButton
+						as={"div"}
 						fontSize={"4xl"}
 						aria-label="user profile"
 						icon={<HamburgerIcon />}
@@ -199,6 +200,7 @@ const HeaderMobileButtons: React.FC<HeaderButtonsProps> = ({
 					{isDesktop ? (
 						<Link href={`/${username}`}>
 							<Button
+								as={"div"}
 								backgroundColor={btnBg}
 								color={btnColor}
 								leftIcon={<AddIcon color={btnColor} />}
@@ -223,6 +225,7 @@ const HeaderMobileButtons: React.FC<HeaderButtonsProps> = ({
 				{!isDesktop && (
 					<MenuItem background={"transparent"}>
 						<IconButton
+							as={"div"}
 							aria-label="toggle color mode"
 							background={"transparent"}
 							icon={darkModeIcon}

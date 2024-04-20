@@ -1,99 +1,80 @@
 "use client";
-import { ImageUploader } from "./ImageUploader";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import {
 	Box,
 	Button,
+	Flex,
 	FormControl,
 	FormLabel,
 	Heading,
 	Input,
 	Switch,
+	Text,
 	Textarea,
 	useColorModeValue,
 	useToast,
 } from "@chakra-ui/react";
-import Markdown from "react-markdown";
 
-import { doc, getDoc, serverTimestamp, updateDoc } from "firebase/firestore";
-import { auth, db } from "@/lib/firebase";
-import { useParams } from "next/navigation";
+import { SubmitHandler, useForm } from "react-hook-form";
+import Markdown from "react-markdown";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+
+import { ImageUploader } from "./ImageUploader";
+
+import { serverTimestamp, updateDoc } from "firebase/firestore";
 import { CM_CARD, CM_HEADER } from "@/constants";
 import { IPost } from "@/lib/types/types";
 import { Loader } from "@/components";
+import { IEditArticleFields } from "@/app/admin/[slug]/page";
+import { set } from "lodash";
 
-export const ArticleEditor: React.FC = () => {
-	const [loading, setLoading] = useState<boolean>(false);
-	const [article, setArticle] = useState<IPost | null>(null);
+interface IArticleEditorProps {
+	article: IPost;
+	// onSubmit: (data: IEditArticleFields) => void;
+}
+
+export const ArticleEditor: React.FC<IArticleEditorProps> = ({
+	article,
+	// onSubmit,
+}) => {
+	console.log("article din editor", article);
 	const [isPreview, setIsPreview] = useState<boolean>(false);
-	const [textAreaContent, setTextAreaContent] = useState<string>("");
-	const [isPublished, setIsPublished] = useState<boolean>(false);
 	const [imageURL, setImageURL] = useState<string>("");
-
-	const toast = useToast();
-	const params = useParams();
-	const { slug } = params;
 
 	const bgColorLight = useColorModeValue(...CM_CARD);
 	const bgColorDark = useColorModeValue(...CM_HEADER);
 
-	const articleRef = useMemo(
-		() => doc(db, `users/${auth?.currentUser?.uid}/posts/${slug}`),
-		[slug]
-	);
+	const articleSchema = yup.object().shape({
+		title: yup.string().required().min(5, "Title is too short"),
+		content: yup.string().required().min(10, "Content is too short"),
+		published: yup.boolean().required(),
+		imageURL: yup.string().required(),
+	});
 
-	useEffect(() => {
-		setLoading(true);
-		const getArticle = async () => {
-			const articleSnap = await getDoc(articleRef);
-
-			if (articleSnap.exists()) {
-				const article = articleSnap.data() as IPost;
-				setArticle(article);
-			}
-		};
-		getArticle().then(() => setLoading(false));
-	}, [articleRef]);
-
-	useEffect(() => {
-		if (article) {
-			setTextAreaContent(article.content);
-			setIsPublished(article.published);
-			setImageURL(article.imageURL || "");
-		}
-	}, [article]);
-
-	const updatePost = useCallback(
-		async (publishedStatus = isPublished) => {
-			await updateDoc(articleRef, {
-				content: textAreaContent,
-				imageURL,
-				published: publishedStatus,
-				updatedAt: serverTimestamp(),
-			});
-
-			toast({
-				title: "Post updated",
-				status: "success",
-				description: "Post updated successfully!",
-			});
+	const {
+		handleSubmit,
+		register,
+		formState: { errors, isValid },
+		setValue,
+	} = useForm({
+		resolver: yupResolver(articleSchema),
+		defaultValues: {
+			title: article.title,
+			content: article.content,
+			published: article.published,
+			imageURL: article.imageURL,
 		},
-		[articleRef, textAreaContent, isPublished, toast, imageURL]
-	);
+	});
 
 	const toggleIsPreview = useCallback(() => {
 		setIsPreview((prev) => !prev);
 	}, [setIsPreview]);
 
-	const handleChangeTextArea = useCallback(
-		(e: React.ChangeEvent<HTMLTextAreaElement>) => {
-			setTextAreaContent(e.target.value);
-		},
-		[setTextAreaContent]
-	);
-
-	if (loading) return <Loader />;
+	useEffect(() => {
+		setValue("imageURL", imageURL);
+	}, [imageURL, setValue]);
 
 	return (
 		<Box
@@ -104,92 +85,91 @@ export const ArticleEditor: React.FC = () => {
 			py={4}
 			borderRadius={"xl"}
 		>
-			<Box mb={8}>
-				<ImageUploader
-					downloadURL={imageURL}
-					setDownloadURL={setImageURL}
-				/>
-			</Box>
-			{isPreview ? (
-				<>
-					<Box
-						mb={8}
-						border={"1px solid gray"}
-						borderRadius={"xl"}
-						bgColor={bgColorDark}
-						px={8}
-						py={4}
-					>
-						<Heading
-							as="h3"
-							fontSize="3xl"
-							mb={4}
-						>
-							{article?.title}
-						</Heading>
-						<Markdown>{textAreaContent}</Markdown>
+			<form onSubmit={handleSubmit(() => {})}>
+				<FormControl isInvalid={!!errors.title}>
+					<Box mb={8}>
+						<ImageUploader
+							downloadURL={imageURL}
+							setDownloadURL={setImageURL}
+						/>
 					</Box>
-					<Button
-						mr={4}
-						onClick={toggleIsPreview}
-					>
-						Edit
-					</Button>
-					<Button
-						onClick={() => {
-							updatePost();
-						}}
-					>
-						Save changes
-					</Button>
-				</>
-			) : (
-				<>
-					<FormControl mb={8}>
-						<FormLabel htmlFor="title">Title</FormLabel>
-						<Input
-							isReadOnly
-							id={"title"}
-							mb={6}
-							value={article?.title}
-						/>
-						<FormLabel htmlFor="content">Content</FormLabel>
-						<Textarea
-							id={"content"}
-							placeholder="Write your article here..."
-							value={textAreaContent}
-							onChange={handleChangeTextArea}
-						/>
-					</FormControl>
+					{isPreview ? (
+						<>
+							<Box
+								mb={8}
+								border={"1px solid gray"}
+								borderRadius={"xl"}
+								bgColor={bgColorDark}
+								px={8}
+								py={4}
+							>
+								<Text
+									aria-label="date posted"
+									fontSize={"sm"}
+								>
+									{article.createdAt === article.updatedAt
+										? "Posted"
+										: "Updated"}
+									{": "}
+									{
+										new Date(Number(article.updatedAt))
+											.toISOString()
+											.split("T")[0]
+									}
+								</Text>
+								<Heading
+									as="h3"
+									fontSize="3xl"
+									mb={4}
+								>
+									{article.title}
+								</Heading>
+								<Markdown>{article.content}</Markdown>
+							</Box>
+							<Button
+								mr={4}
+								onClick={toggleIsPreview}
+							>
+								Edit
+							</Button>
+							<Button type="submit">Save changes</Button>
+						</>
+					) : (
+						<Flex flexDir={"column"}>
+							<FormLabel
+								htmlFor="published"
+								mb="0"
+							>
+								Published:
+							</FormLabel>
+							<Switch id="published" />
+							<Box>
+								<FormLabel htmlFor="title">Title</FormLabel>
+								<Input
+									isReadOnly
+									id={"title"}
+									mb={6}
+									value={article?.title}
+									{...register("title")}
+								/>
+								<FormLabel htmlFor="content">Content</FormLabel>
+								<Textarea
+									id={"content"}
+									placeholder="Write your article here..."
+									{...register("content")}
+								/>
 
-					<Button
-						onClick={toggleIsPreview}
-						isDisabled={!textAreaContent}
-					>
-						Preview
-					</Button>
-				</>
-			)}
-			<FormControl
-				display="flex"
-				alignItems="center"
-				mt={2}
-			>
-				<FormLabel
-					htmlFor="publish-post"
-					mb="0"
-				>
-					Published:
-				</FormLabel>
-				<Switch
-					onChange={() => {
-						updatePost(!isPublished);
-						setIsPublished((prev) => !prev);
-					}}
-					isChecked={isPublished}
-					id="publish-post"
-				/>
-			</FormControl>
+								<Button
+									onClick={toggleIsPreview}
+									isDisabled={isValid}
+								>
+									Preview
+								</Button>
+							</Box>
+						</Flex>
+					)}
+				</FormControl>
+			</form>
 		</Box>
 	);
 };

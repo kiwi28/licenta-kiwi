@@ -33,5 +33,12 @@ export const SignInButton = () => {
 };
 
 export const SignOutButton = () => {
-	return <Button onClick={() => auth.signOut()}>Sign Out</Button>;
+	return (
+		<Button
+			as={"div"}
+			onClick={() => auth.signOut()}
+		>
+			Sign Out
+		</Button>
+	);
 };
