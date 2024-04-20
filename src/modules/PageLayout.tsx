@@ -10,21 +10,8 @@ import { useUserDataCtx } from "@/lib/hooks";
 import { Loader } from "@/components";
 
 export const PageLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
-	// const pathName = usePathname();
-	// const router = useRouter();
-
-	// const { user, username, isLoadingUser } = useUserDataCtx();
-
-	// if (user && !username && !isLoadingUser && pathName !== "/register") {
-	// 	router.push("/register");
-	// }
-
 	const txtColor = useColorModeValue(...CM_TEXT);
 	const layoutColor = useColorModeValue(...CM_LAYOUT);
-
-	// if (isLoadingUser) {
-	// 	return <Loader />;
-	// }
 
 	return (
 		<VStack

@@ -2,21 +2,21 @@
 import { useEffect, useState } from "react";
 
 import { getDocs, orderBy, query, collection } from "firebase/firestore";
+import { useParams } from "next/navigation";
 
 import { auth, db, getUserWithUsername, postToJson } from "../../lib/firebase";
-import { useUserDataCtx } from "@/lib/hooks";
 import { IPost } from "@/lib/types/types";
 import { ArticlesFeed } from "@/modules";
 
 export default function UserProfile() {
 	const [posts, setPosts] = useState<IPost[]>([]);
 	const [uid, setUid] = useState<string | null>(null);
-	const { username } = useUserDataCtx();
+	const { user } = useParams();
 
 	useEffect(() => {
 		async function getPosts() {
-			if (username) {
-				const userDoc = await getUserWithUsername(username);
+			if (user) {
+				const userDoc = await getUserWithUsername(user);
 				const uid = userDoc.id;
 				setUid(uid);
 
@@ -36,7 +36,7 @@ export default function UserProfile() {
 			}
 		}
 		getPosts();
-	}, [username]);
+	}, [user]);
 
 	return (
 		<ArticlesFeed
