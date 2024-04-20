@@ -72,7 +72,7 @@ export const ArticleCreate: React.FC<ArticleCreateProps> = ({
 		});
 
 		onClose();
-		router.push(`/admin/${slug}`);
+		router.push(`/admin/${uid}/${slug}`);
 	}, [slug, title, username, router, toast, onClose]);
 
 	const handleChangeTitle = useCallback(

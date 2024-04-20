@@ -27,7 +27,7 @@ import { serverTimestamp, updateDoc } from "firebase/firestore";
 import { CM_CARD, CM_HEADER } from "@/constants";
 import { IPost } from "@/lib/types/types";
 import { Loader } from "@/components";
-import { IEditArticleFields } from "@/app/admin/[slug]/page";
+import { IEditArticleFields } from "@/app/admin/[adminID]/[slug]/page";
 import { set } from "lodash";
 
 interface IArticleEditorProps {

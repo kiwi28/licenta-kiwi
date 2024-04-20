@@ -41,7 +41,7 @@ export default function UserProfile() {
 	return (
 		<ArticlesFeed
 			posts={posts}
-			admin={uid == auth?.currentUser?.uid}
+			uid={uid === auth?.currentUser?.uid ? uid : ""}
 		/>
 	);
 }

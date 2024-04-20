@@ -4,12 +4,12 @@ import { IPost } from "@/lib/types/types";
 
 interface ArticlesFeedProps {
 	posts: IPost[];
-	admin?: boolean;
+	uid?: string;
 }
 
 export const ArticlesFeed: React.FC<ArticlesFeedProps> = ({
 	posts,
-	admin = false,
+	uid = "",
 }) => {
 	return (
 		<>
@@ -17,7 +17,7 @@ export const ArticlesFeed: React.FC<ArticlesFeedProps> = ({
 				<ArticleCard
 					key={idx}
 					article={post}
-					admin={admin}
+					uid={uid}
 				/>
 			))}
 		</>

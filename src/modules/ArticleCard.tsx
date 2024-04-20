@@ -19,13 +19,10 @@ import { EditIcon } from "@chakra-ui/icons";
 
 interface IArticleCardProps extends BoxProps {
 	article: IPost;
-	admin?: boolean;
+	uid?: string;
 }
 
-export const ArticleCard: React.FC<IArticleCardProps> = ({
-	article,
-	admin = false,
-}) => {
+export const ArticleCard: React.FC<IArticleCardProps> = ({ article, uid }) => {
 	return (
 		<Box
 			borderRadius={"md"}
@@ -120,9 +117,9 @@ export const ArticleCard: React.FC<IArticleCardProps> = ({
 								<Text mr={1}>{article.heartCount}</Text>
 								<Text>upvotes</Text>
 							</Flex>
-							{admin && (
+							{uid && (
 								<Flex>
-									<Link href={`/admin/${article.slug}`}>
+									<Link href={`/admin/${uid}/${article.slug}`}>
 										<Button
 											ml={4}
 											leftIcon={<EditIcon />}

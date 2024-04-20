@@ -1,13 +1,15 @@
 import { Loader } from "@/components";
-import { auth, db } from "@/lib/firebase";
+import { db } from "@/lib/firebase";
 import { IPost } from "@/lib/types/types";
 import { ArticleEditor } from "@/modules";
 import { SpinnerIcon } from "@chakra-ui/icons";
 import { Box, Spinner, useToast } from "@chakra-ui/react";
 import { doc, getDoc, serverTimestamp, updateDoc } from "firebase/firestore";
 import { get } from "lodash";
-import { useParams } from "next/navigation";
+import { notFound, redirect, useParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
+
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 export interface IEditArticleFields {
 	title: string;
@@ -16,17 +18,19 @@ export interface IEditArticleFields {
 	imageURL: string;
 }
 interface IAdminProps {
-	params: { slug: string };
+	params: { slug: string; adminID: string };
 }
 
 const Admin: React.FC<IAdminProps> = async ({ params }) => {
+	let article = {} as IPost;
 	// const [loading, setLoading] = useState<boolean>(false);
 	// const [article, setArticle] = useState<IPost>({} as IPost);
 
 	// const toast = useToast();
 	// const params = useParams();
-	const { slug } = params;
-	console.log("auth", auth);
+
+	console.log("params", params);
+	const { slug, adminID } = params;
 
 	// const articleRef = useMemo(
 	// 	() => doc(db, `users/${auth?.currentUser?.uid}/posts/${slug}`),
@@ -35,15 +39,14 @@ const Admin: React.FC<IAdminProps> = async ({ params }) => {
 
 	// setLoading(true);
 
-	const articleRef = doc(db, `users/${auth.currentUser?.uid}/posts/${slug}`);
+	const articleRef = doc(db, `users/${adminID}/posts/${slug}`);
 	const articleSnap = await getDoc(articleRef);
 
-	const article = articleSnap.data();
-	console.log(article);
-
-	// if (articleSnap.exists()) {
-	// 	console.log({ articleData });
-	// }
+	if (articleSnap.exists()) {
+		article = articleSnap.data() as IPost;
+	} else {
+		notFound();
+	}
 	// setLoading(false);
 
 	// const getArticle = useCallback(async () => {
@@ -90,15 +93,15 @@ const Admin: React.FC<IAdminProps> = async ({ params }) => {
 	// 	return <Box color={"orange"}>Article not found!</Box>;
 	// }
 
-	return <Box>Admin</Box>;
+	// return <Box>Admin</Box>;
 
-	// return (
-	// 	<ArticleEditor
-	// 		article={article}
-	// 		// onSubmit={onSubmit}
-	// 		// getArticle={getArticle}
-	// 	/>
-	// );
+	return (
+		<ArticleEditor
+			article={article}
+			// onSubmit={onSubmit}
+			// getArticle={getArticle}
+		/>
+	);
 };
 
 export default Admin;
