@@ -274,7 +274,7 @@ const SearchBar: React.FC = () => {
 			const results = (await getDocs(resultsQuery)).docs.map(postToJson);
 			setResults(
 				results.filter((article) =>
-					article.title.toLowerCase().includes(searchTerm)
+					article.title.toLowerCase().includes(searchTerm.toLowerCase())
 				)
 			);
 		};
