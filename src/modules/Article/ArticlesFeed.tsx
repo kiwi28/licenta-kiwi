@@ -3,12 +3,14 @@ import { IPost } from "@/lib/types/types";
 
 interface ArticlesFeedProps {
 	posts: IPost[];
-	uid?: string;
+	uidUser?: string;
+	setRefresh?: (value: number) => void;
 }
 
 export const ArticlesFeed: React.FC<ArticlesFeedProps> = ({
 	posts,
-	uid = "",
+	uidUser = "",
+	setRefresh = () => {},
 }) => {
 	return (
 		<>
@@ -16,7 +18,8 @@ export const ArticlesFeed: React.FC<ArticlesFeedProps> = ({
 				<ArticleCard
 					key={idx}
 					article={post}
-					uid={uid}
+					uidUser={uidUser}
+					setRefresh={setRefresh}
 				/>
 			))}
 		</>

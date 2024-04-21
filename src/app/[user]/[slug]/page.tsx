@@ -4,13 +4,13 @@ import { useEffect, useState } from "react";
 import { notFound, useParams } from "next/navigation";
 import { doc, getDoc } from "firebase/firestore";
 
-import { Box, useColorModeValue } from "@chakra-ui/react";
+import { Box, useColorModeValue, useToast } from "@chakra-ui/react";
 
 import { db, getUserWithUsername } from "@/lib/firebase";
 import { IPost } from "@/lib/types/types";
-import { CM_CARD, CM_VOTE } from "@/constants";
+import { CM_CARD } from "@/constants";
 
-import { Loader, UpvotehFilled } from "@/components";
+import { Loader } from "@/components";
 import { ArticleView } from "@/modules";
 
 export default function ArticlePage() {
@@ -19,6 +19,7 @@ export default function ArticlePage() {
 	const [userUid, setUserUid] = useState<string | null>(null);
 	const [isNotFount, setIsNotFound] = useState<boolean>(false);
 
+	const toast = useToast();
 	const params = useParams();
 	const username =
 		typeof params.user === "string" ? params.user : params.user[0];
@@ -30,9 +31,13 @@ export default function ArticlePage() {
 		setLoading(true);
 		const getUserData = async () => {
 			const userDoc = await getUserWithUsername(username);
-			setUserUid(userDoc.id);
+			if (userDoc) {
+				setUserUid(userDoc.id);
+			} else {
+				setIsNotFound(true);
+			}
 		};
-		getUserData().then(() => setLoading(false));
+		getUserData().finally(() => setLoading(false));
 	}, [username]);
 
 	useEffect(() => {
@@ -50,12 +55,17 @@ export default function ArticlePage() {
 				}
 			};
 			getArticleData()
-				.then(() => setLoading(false))
 				.catch((err) => {
+					toast({
+						title: "Error",
+						description: "Failed to load article.",
+						status: "error",
+					});
 					console.error(err);
-				});
+				})
+				.finally(() => setLoading(false));
 		}
-	}, [userUid, slug]);
+	}, [userUid, slug, toast]);
 
 	if (loading) return <Loader />;
 	if (isNotFount) notFound();

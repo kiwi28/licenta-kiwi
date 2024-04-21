@@ -256,7 +256,6 @@ const SearchBar: React.FC = () => {
 	const { isOpen, onOpen, onClose } = useDisclosure();
 
 	const pathname = usePathname();
-	console.log("pathNm", pathname);
 
 	useEffect(() => {
 		setLoading(true);

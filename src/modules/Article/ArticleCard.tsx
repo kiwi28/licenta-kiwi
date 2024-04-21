@@ -7,21 +7,75 @@ import {
 	Button,
 	Flex,
 	Heading,
+	Modal,
+	ModalBody,
+	ModalContent,
+	ModalFooter,
+	ModalHeader,
+	ModalOverlay,
 	Text,
 	useColorModeValue,
+	useDisclosure,
+	useToast,
 } from "@chakra-ui/react";
-import { EditIcon } from "@chakra-ui/icons";
+import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
 import Link from "next/link";
 
 import { IPost } from "@/lib/types/types";
 import { CM_CARD } from "@/constants";
+import { useCallback } from "react";
+import {
+	DocumentData,
+	DocumentReference,
+	deleteDoc,
+	doc,
+} from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import { set } from "lodash";
 
 interface IArticleCardProps extends BoxProps {
 	article: IPost;
-	uid?: string;
+	uidUser?: string;
+	setRefresh?: (value: number) => void;
 }
 
-export const ArticleCard: React.FC<IArticleCardProps> = ({ article, uid }) => {
+export const ArticleCard: React.FC<IArticleCardProps> = ({
+	article,
+	uidUser,
+	setRefresh,
+}) => {
+	const { isOpen, onOpen, onClose } = useDisclosure();
+	const toast = useToast();
+
+	const bgColorLight = useColorModeValue(...CM_CARD);
+
+	let articleRef: DocumentReference<DocumentData, DocumentData>;
+	if (uidUser) {
+		articleRef = doc(db, `users/${uidUser}/posts/${article.slug}`);
+	}
+
+	const handleDelete = useCallback(async () => {
+		if (articleRef) {
+			try {
+				await deleteDoc(articleRef);
+				toast({
+					title: "Article deleted",
+					status: "success",
+					description: "Post deleted successfully!",
+				});
+				// set refresh is setState in the parent and the state value it;s used in the parent's useEffect that gets the articles. When it changes, it triggers data refetch
+				if (setRefresh) setRefresh(Math.random());
+			} catch (error) {
+				console.error("Error deleting article", error);
+				toast({
+					title: "Error deleting Article",
+					status: "error",
+					description:
+						"An error occurred. Please try again or contact support.",
+				});
+			}
+		}
+	}, [articleRef, toast, setRefresh]);
 	return (
 		<Box
 			borderRadius={"md"}
@@ -75,18 +129,19 @@ export const ArticleCard: React.FC<IArticleCardProps> = ({ article, uid }) => {
 							<Flex
 								flexDir={"column"}
 								justifyContent={"flex-end"}
+								role="group"
 							>
-								<Box
-									background={
-										article.imageURL ? `url(${article.imageURL})` : "none"
-									}
-									backgroundPosition={"center"}
-									backgroundSize={"cover"}
-									h={article.imageURL ? 48 : "none"}
-									mb={4}
-								/>
+								{article.imageURL && (
+									<Box
+										background={`url(${article.imageURL})`}
+										backgroundPosition={"center"}
+										backgroundSize={"cover"}
+										h={48}
+										mb={4}
+									/>
+								)}
 								<Heading
-									_hover={{
+									_groupHover={{
 										textDecoration: "underline",
 									}}
 									aria-label="article title"
@@ -101,30 +156,26 @@ export const ArticleCard: React.FC<IArticleCardProps> = ({ article, uid }) => {
 							flexWrap={"wrap"}
 							alignItems={"center"}
 						>
-							{/* <Flex
-								alignItems={"center"}
-								mr={4}
-								p={2}
-								pl={0}
-							>
-								<UpvotehFilled
-									color={useColorModeValue(...CM_VOTE)}
-									w={5}
-									h={5}
-									mr={2}
-								/>
-
-								<Text mr={1}>{article.heartCount}</Text>
-								<Text>upvotes</Text>
-							</Flex> */}
-							{uid && (
+							{uidUser && (
 								<Flex
 									mt={8}
 									alignItems={"center"}
 								>
-									<Link href={`/admin/${uid}/${article.slug}`}>
-										<Button leftIcon={<EditIcon />}>Edit</Button>
+									<Link href={`/admin/${uidUser}/${article.slug}`}>
+										<Button
+											mr={4}
+											leftIcon={<EditIcon />}
+										>
+											Edit
+										</Button>
 									</Link>
+									<Button
+										colorScheme="red"
+										leftIcon={<DeleteIcon />}
+										onClick={onOpen}
+									>
+										Delete
+									</Button>
 
 									{!article.published && (
 										<Text
@@ -140,6 +191,34 @@ export const ArticleCard: React.FC<IArticleCardProps> = ({ article, uid }) => {
 					</Box>
 				</Box>
 			</Flex>
+			<Modal
+				isOpen={isOpen}
+				onClose={onClose}
+			>
+				<ModalOverlay />
+				<ModalContent bgColor={bgColorLight}>
+					<ModalHeader>Do you want to delete this article ?</ModalHeader>
+					<ModalBody>{article.title}</ModalBody>
+
+					<ModalFooter>
+						<Button
+							mr={4}
+							colorScheme="red"
+							leftIcon={<DeleteIcon />}
+							onClick={handleDelete}
+						>
+							Delete
+						</Button>
+
+						<Button
+							variant="ghost"
+							onClick={onClose}
+						>
+							Cancel
+						</Button>
+					</ModalFooter>
+				</ModalContent>
+			</Modal>
 		</Box>
 	);
 };

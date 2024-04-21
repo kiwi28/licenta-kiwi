@@ -78,7 +78,6 @@ export const ArticleEditor: React.FC<IArticleEditorProps> = ({ article }) => {
 
 	const onSubmit = useCallback(
 		async (data: { content: string }) => {
-			console.log({ data });
 			try {
 				await updateDoc(articleRef, {
 					content: data.content,
