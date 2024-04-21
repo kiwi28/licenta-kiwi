@@ -31,8 +31,6 @@ import {
 	doc,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { set } from "lodash";
-
 interface IArticleCardProps extends BoxProps {
 	article: IPost;
 	uidUser?: string;
@@ -50,32 +48,56 @@ export const ArticleCard: React.FC<IArticleCardProps> = ({
 	const bgColorLight = useColorModeValue(...CM_CARD);
 
 	let articleRef: DocumentReference<DocumentData, DocumentData>;
+	let handleDelete: () => void;
 	if (uidUser) {
 		articleRef = doc(db, `users/${uidUser}/posts/${article.slug}`);
+		handleDelete = async () => {
+			if (articleRef && toast && setRefresh) {
+				try {
+					await deleteDoc(articleRef);
+					toast({
+						title: "Article deleted",
+						status: "success",
+						description: "Post deleted successfully!",
+					});
+					// set refresh is setState in the parent and the state value it;s used in the parent's useEffect that gets the articles. When it changes, it triggers data refetch
+					setRefresh(Math.random());
+				} catch (error) {
+					console.error("Error deleting article", error);
+					toast({
+						title: "Error deleting Article",
+						status: "error",
+						description:
+							"An error occurred. Please try again or contact support.",
+					});
+				}
+			}
+		};
 	}
 
-	const handleDelete = useCallback(async () => {
-		if (articleRef) {
-			try {
-				await deleteDoc(articleRef);
-				toast({
-					title: "Article deleted",
-					status: "success",
-					description: "Post deleted successfully!",
-				});
-				// set refresh is setState in the parent and the state value it;s used in the parent's useEffect that gets the articles. When it changes, it triggers data refetch
-				if (setRefresh) setRefresh(Math.random());
-			} catch (error) {
-				console.error("Error deleting article", error);
-				toast({
-					title: "Error deleting Article",
-					status: "error",
-					description:
-						"An error occurred. Please try again or contact support.",
-				});
-			}
-		}
-	}, [articleRef, toast, setRefresh]);
+	// const handleDelete = useCallback(async () => {
+	// 	if (articleRef) {
+	// 		try {
+	// 			await deleteDoc(articleRef);
+	// 			toast({
+	// 				title: "Article deleted",
+	// 				status: "success",
+	// 				description: "Post deleted successfully!",
+	// 			});
+	// 			// set refresh is setState in the parent and the state value it;s used in the parent's useEffect that gets the articles. When it changes, it triggers data refetch
+	// 			if (setRefresh) setRefresh(Math.random());
+	// 		} catch (error) {
+	// 			console.error("Error deleting article", error);
+	// 			toast({
+	// 				title: "Error deleting Article",
+	// 				status: "error",
+	// 				description:
+	// 					"An error occurred. Please try again or contact support.",
+	// 			});
+	// 		}
+	// 	}
+	// 	// eslint-disable-next-line react-hooks/exhaustive-deps
+	// }, [articleRef, toast, setRefresh]);
 	return (
 		<Box
 			borderRadius={"md"}
