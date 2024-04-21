@@ -12,12 +12,14 @@ import {
 	startAfter,
 } from "firebase/firestore";
 
+import { Button, Spinner } from "@chakra-ui/react";
+
 import { IPost } from "@/lib/types/types";
 import { ArticlesFeed } from "@/modules";
-import { Button, Spinner } from "@chakra-ui/react";
+
 import { Loader } from "@/components";
 
-const LIMIT = 2;
+const LIMIT = 3;
 
 export default function Home() {
 	const [posts, setPosts] = useState<IPost[]>([]);

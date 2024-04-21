@@ -1,13 +1,10 @@
 "use client";
-import { usePathname, useRouter } from "next/navigation";
 
 import { Box, Flex, VStack, useColorModeValue } from "@chakra-ui/react";
 
 import { Header } from "./Header";
 
 import { CM_LAYOUT, CM_TEXT } from "@/constants";
-import { useUserDataCtx } from "@/lib/hooks";
-import { Loader } from "@/components";
 
 export const PageLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
 	const txtColor = useColorModeValue(...CM_TEXT);

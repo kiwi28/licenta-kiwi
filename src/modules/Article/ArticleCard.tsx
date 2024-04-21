@@ -1,6 +1,5 @@
 "use client";
 
-import { CM_CARD } from "@/constants";
 import {
 	Avatar,
 	Box,
@@ -11,10 +10,11 @@ import {
 	Text,
 	useColorModeValue,
 } from "@chakra-ui/react";
+import { EditIcon } from "@chakra-ui/icons";
+import Link from "next/link";
 
 import { IPost } from "@/lib/types/types";
-import Link from "next/link";
-import { EditIcon } from "@chakra-ui/icons";
+import { CM_CARD } from "@/constants";
 
 interface IArticleCardProps extends BoxProps {
 	article: IPost;
@@ -46,6 +46,9 @@ export const ArticleCard: React.FC<IArticleCardProps> = ({ article, uid }) => {
 						<Box>
 							<Link href={`/${article.username}`}>
 								<Text
+									_hover={{
+										textDecoration: "underline",
+									}}
 									lineHeight={"none"}
 									aria-label="article author"
 									fontSize={"lg"}
@@ -83,6 +86,9 @@ export const ArticleCard: React.FC<IArticleCardProps> = ({ article, uid }) => {
 									mb={4}
 								/>
 								<Heading
+									_hover={{
+										textDecoration: "underline",
+									}}
 									aria-label="article title"
 									as="h3"
 									size="xl"

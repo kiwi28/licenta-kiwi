@@ -1,8 +1,17 @@
 "use client";
+import { useEffect, useState } from "react";
+
 import Image from "next/image";
 import Link from "next/link";
-
+import { usePathname } from "next/navigation";
 import { User as IUser } from "firebase/auth";
+import {
+	collectionGroup,
+	getDocs,
+	query,
+	orderBy,
+	where,
+} from "firebase/firestore";
 
 import {
 	Box,
@@ -26,7 +35,6 @@ import {
 	useDisclosure,
 	useMediaQuery,
 } from "@chakra-ui/react";
-// import { Link } from "@chakra-ui/next-js";
 import {
 	AddIcon,
 	HamburgerIcon,
@@ -44,9 +52,13 @@ import {
 	CM_TEXT,
 } from "@/constants";
 import { useUserDataCtx } from "@/lib/hooks";
+import { db, postToJson } from "@/lib/firebase";
+import { IPost } from "@/lib/types/types";
 
 import { SignInButton, SignOutButton } from "@/components/Auth";
 import { ArticleCreate } from "./Article/ArticleCreate";
+import { Loader } from "@/components";
+import { SearchResult } from "./Article/SearchResult";
 
 export const Header: React.FC = () => {
 	const { toggleColorMode } = useColorMode();
@@ -238,7 +250,43 @@ const HeaderMobileButtons: React.FC<HeaderButtonsProps> = ({
 };
 
 const SearchBar: React.FC = () => {
+	const [searchTerm, setSearchTerm] = useState("");
+	const [loading, setLoading] = useState(false);
+	const [results, setResults] = useState([] as IPost[]);
 	const { isOpen, onOpen, onClose } = useDisclosure();
+
+	const pathname = usePathname();
+	console.log("pathNm", pathname);
+
+	useEffect(() => {
+		setLoading(true);
+		const debouncedSearch = async () => {
+			if (searchTerm.length < 3) {
+				setResults([]);
+				return;
+			}
+
+			const resultsQuery = query(
+				collectionGroup(db, "posts"),
+				where("published", "==", true),
+				orderBy("createdAt", "desc")
+			);
+
+			const results = (await getDocs(resultsQuery)).docs.map(postToJson);
+			setResults(
+				results.filter((article) =>
+					article.title.toLowerCase().includes(searchTerm)
+				)
+			);
+		};
+		debouncedSearch().then(() => setLoading(false));
+	}, [searchTerm]);
+
+	useEffect(() => {
+		setSearchTerm("");
+		onClose();
+	}, [onClose, pathname]);
+
 	return (
 		<>
 			<InputGroup onClick={onOpen}>
@@ -251,8 +299,7 @@ const SearchBar: React.FC = () => {
 				<Input
 					border={"none"}
 					backgroundColor={useColorModeValue(...CM_INPUT)}
-					placeholder="Search an article ..."
-					// _placeholder={{ color: "gray.100", opacity: 0.8 }}
+					placeholder="Search an article or author ..."
 				/>
 			</InputGroup>
 			<Modal
@@ -270,57 +317,29 @@ const SearchBar: React.FC = () => {
 								<SearchIcon h={4} />
 							</InputLeftElement>
 							<Input
+								value={searchTerm}
+								onChange={(e) => setSearchTerm(e.target.value)}
 								_focusVisible={{ outline: "none" }}
 								border={"none"}
 								backgroundColor={useColorModeValue(...CM_INPUT)}
-								placeholder="Search an article ..."
-								// _placeholder={{ color: "gray.100", opacity: 0.8 }}
-								// TODO: add search and filter logic here
+								placeholder="Search an article or author ..."
 							/>
 						</InputGroup>
+						<Box>
+							{loading ? (
+								<Loader />
+							) : (
+								results.map((article, idx) => (
+									<SearchResult
+										key={idx}
+										article={article}
+									/>
+								))
+							)}
+						</Box>
 					</ModalBody>
 				</ModalContent>
 			</Modal>
 		</>
 	);
 };
-
-// const HeaderDesktopButtons: React.FC<HeaderButtonsProps> = ({ isUser }) => {
-// 	const { toggleColorMode } = useColorMode();
-// 	const btnBg = useColorModeValue(...CM_BUTTON_CONTRAST);
-// 	const btnColor = useColorModeValue(...CM_TEXT);
-
-// 	return (
-// 		<>
-// 			{isUser ? (
-// 				<>
-// 					<Button
-// 						// colorScheme="teal"
-// 						backgroundColor={btnBg}
-// 						color={btnColor}
-// 						leftIcon={<AddIcon color={btnColor} />}
-// 					>
-// 						New Post
-// 					</Button>
-// 					<Button
-// 						color={btnColor}
-// 						background={"transparent"}
-// 					>
-// 						Log Out
-// 					</Button>
-// 				</>
-// 			) : (
-// 				<>
-// 					<Button>Log In</Button>
-// 					<Button>Register</Button>
-// 				</>
-// 			)}
-// 			<IconButton
-// 				aria-label="toggle color mode"
-// 				background={"transparent"}
-// 				icon={useColorModeValue(<MoonIcon />, <SunIcon />)}
-// 				onClick={toggleColorMode}
-// 			/>
-// 		</>
-// 	);
-// };

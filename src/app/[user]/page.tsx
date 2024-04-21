@@ -20,9 +20,6 @@ export default function UserProfile() {
 				const uid = userDoc.id;
 				setUid(uid);
 
-				// let user: Partial<User>;
-				// let posts: PostWFB[];
-
 				if (userDoc) {
 					const postsQuery = query(
 						collection(db, "users", uid, "posts"),
