@@ -227,7 +227,9 @@ export const ArticleCard: React.FC<IArticleCardProps> = ({
 							mr={4}
 							colorScheme="red"
 							leftIcon={<DeleteIcon />}
-							onClick={handleDelete}
+							onClick={() => {
+								if (handleDelete) handleDelete();
+							}}
 						>
 							Delete
 						</Button>
