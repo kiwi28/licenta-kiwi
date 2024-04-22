@@ -79,7 +79,7 @@ export const Header: React.FC = () => {
 			<Grid
 				templateColumns={["repeat(8, 1fr)", null, null, "repeat(3, 1fr)"]}
 				as="header"
-				p={[4, null, 6]}
+				p={[2, null, 4]}
 				w={"100%"}
 				alignItems={"center"}
 				position={"fixed"}
@@ -95,10 +95,10 @@ export const Header: React.FC = () => {
 					>
 						<Link href={"/"}>
 							<Image
-								src="/vercel.svg"
-								alt="Vercel Logo"
-								height={8}
-								width={32}
+								src="/kiwi-chirp-logo.png"
+								alt="Kiwi Chirp Logo"
+								height={32}
+								width={70}
 							/>
 						</Link>
 					</Flex>
