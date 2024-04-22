@@ -21,8 +21,8 @@ export const PageLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
 				minH={"100vh"}
 				w={"100%"}
 				backgroundColor={layoutColor}
-				pt={28}
-				px={["5vw", null, "15vw"]}
+				pt={24}
+				px={[0, null, null, "15vw"]}
 			>
 				<Flex
 					flexDirection={"column"}

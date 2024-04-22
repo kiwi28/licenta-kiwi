@@ -17,6 +17,8 @@ import {
 	Box,
 	Button,
 	Flex,
+	Grid,
+	GridItem,
 	IconButton,
 	Input,
 	InputGroup,
@@ -29,6 +31,7 @@ import {
 	ModalBody,
 	ModalContent,
 	ModalOverlay,
+	SimpleGrid,
 	Text,
 	useColorMode,
 	useColorModeValue,
@@ -73,72 +76,79 @@ export const Header: React.FC = () => {
 
 	return (
 		<>
-			<Flex
+			<Grid
+				templateColumns={["repeat(8, 1fr)", null, null, "repeat(3, 1fr)"]}
 				as="header"
-				p={6}
+				p={[4, null, 6]}
 				w={"100%"}
 				alignItems={"center"}
 				position={"fixed"}
 				backgroundColor={useColorModeValue(...CM_HEADER)}
-				// backgroundColor={"teal.700"}
 				zIndex={100}
 				backdropFilter="saturate(180%) blur(10px)"
 			>
-				<Flex
-					flexGrow={1}
-					justifyContent={"flex-end"}
-					alignItems={"center"}
-				>
-					<Link href={"/"}>
-						<Image
-							src="/vercel.svg"
-							alt="Vercel Logo"
-							height={8}
-							width={32}
-						/>
-					</Link>
-				</Flex>
-				<Flex
-					alignItems={"center"}
-					flexGrow={2}
-					px={4}
-				>
-					<SearchBar />
-				</Flex>
-				<Flex
-					alignItems={"center"}
-					flexGrow={1}
-					gap={4}
-				>
-					{isDesktop && (
-						<Button
-							backgroundColor={btnBg}
-							color={btnColor}
-							leftIcon={<AddIcon color={btnColor} />}
-							onClick={onOpen}
-						>
-							New Post
-						</Button>
-					)}
-					{user && username ? (
-						<HeaderMobileButtons
-							user={user}
-							username={username}
-						/>
-					) : (
-						<SignInButton />
-					)}
-					{isDesktop && (
-						<IconButton
-							aria-label="toggle color mode"
-							background={"transparent"}
-							icon={darkModeIcon}
-							onClick={toggleColorMode}
-							fontSize={"2xl"}
-						/>
-					)}
-				</Flex>
-			</Flex>
+				<GridItem colSpan={1}>
+					<Flex
+						flexGrow={1}
+						justifyContent={"flex-end"}
+						alignItems={"center"}
+					>
+						<Link href={"/"}>
+							<Image
+								src="/vercel.svg"
+								alt="Vercel Logo"
+								height={8}
+								width={32}
+							/>
+						</Link>
+					</Flex>
+				</GridItem>
+				<GridItem colSpan={[6, null, null, 1]}>
+					<Flex
+						// w={"30rem"}
+						alignItems={"center"}
+						flexGrow={2}
+						px={4}
+					>
+						<SearchBar />
+					</Flex>
+				</GridItem>
+				<GridItem colSpan={1}>
+					<Flex
+						alignItems={"center"}
+						flexGrow={1}
+						gap={4}
+					>
+						{isDesktop && (
+							<Button
+								backgroundColor={btnBg}
+								color={btnColor}
+								leftIcon={<AddIcon color={btnColor} />}
+								onClick={onOpen}
+							>
+								New Post
+							</Button>
+						)}
+						{user && username ? (
+							<HeaderMobileButtons
+								user={user}
+								username={username}
+							/>
+						) : (
+							<SignInButton />
+						)}
+						{isDesktop && (
+							<IconButton
+								aria-label="toggle color mode"
+								background={"transparent"}
+								icon={darkModeIcon}
+								onClick={toggleColorMode}
+								fontSize={"2xl"}
+							/>
+						)}
+					</Flex>
+				</GridItem>
+			</Grid>
 			<ArticleCreate
 				isOpen={isOpen}
 				onClose={onClose}

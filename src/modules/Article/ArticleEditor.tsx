@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 import {
 	Box,
@@ -31,7 +31,7 @@ import { ImageUploader } from "../ImageUploader";
 import { deleteDoc, doc, serverTimestamp, updateDoc } from "firebase/firestore";
 import { CM_CARD, CM_HEADER } from "@/constants";
 import { IPost } from "@/lib/types/types";
-import { redirect, useParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import { db } from "@/lib/firebase";
 import { ArticleView } from "./ArticleView";
 import Link from "next/link";

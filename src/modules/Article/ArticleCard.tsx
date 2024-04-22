@@ -102,7 +102,7 @@ export const ArticleCard: React.FC<IArticleCardProps> = ({
 		<Box
 			borderRadius={"md"}
 			backgroundColor={useColorModeValue(...CM_CARD)}
-			w={["90%", null, "44rem"]}
+			w={["97%", null, "44rem"]}
 			minW={80}
 			mb={8}
 		>
