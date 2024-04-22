@@ -1,4 +1,14 @@
 "use client";
+import { useCallback } from "react";
+import {
+	DocumentData,
+	DocumentReference,
+	Timestamp,
+	deleteDoc,
+	doc,
+} from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import Link from "next/link";
 
 import {
 	Avatar,
@@ -19,23 +29,21 @@ import {
 	useToast,
 } from "@chakra-ui/react";
 import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
-import Link from "next/link";
 
 import { IPost } from "@/lib/types/types";
 import { CM_CARD } from "@/constants";
-import { useCallback } from "react";
-import {
-	DocumentData,
-	DocumentReference,
-	deleteDoc,
-	doc,
-} from "firebase/firestore";
-import { db } from "@/lib/firebase";
 interface IArticleCardProps extends BoxProps {
 	article: IPost;
 	uidUser?: string;
 	setRefresh?: (value: number) => void;
 }
+
+const convertFirebaseDate = (date: Timestamp) => {
+	const fireBaseTime = new Date(
+		date.seconds * 1000 + date.nanoseconds / 1000000
+	);
+	return new Intl.DateTimeFormat("ro-RO").format(fireBaseTime);
+};
 
 export const ArticleCard: React.FC<IArticleCardProps> = ({
 	article,
@@ -138,11 +146,7 @@ export const ArticleCard: React.FC<IArticleCardProps> = ({
 							>
 								{article.createdAt === article.updatedAt ? "Posted" : "Updated"}
 								{": "}
-								{
-									new Date(Number(article.updatedAt))
-										.toISOString()
-										.split("T")[0]
-								}
+								{convertFirebaseDate(article.updatedAt)}
 							</Text>
 						</Box>
 					</Flex>
