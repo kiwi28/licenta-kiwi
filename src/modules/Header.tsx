@@ -283,8 +283,10 @@ const SearchBar: React.FC = () => {
 
 			const results = (await getDocs(resultsQuery)).docs.map(postToJson);
 			setResults(
-				results.filter((article) =>
-					article.title.toLowerCase().includes(searchTerm.toLowerCase())
+				results.filter(
+					(article) =>
+						article.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+						article.username.toLowerCase().includes(searchTerm.toLowerCase())
 				)
 			);
 		};
@@ -309,6 +311,8 @@ const SearchBar: React.FC = () => {
 					border={"none"}
 					backgroundColor={useColorModeValue(...CM_INPUT)}
 					placeholder="Search an article or author ..."
+					isReadOnly
+					cursor={"pointer"}
 				/>
 			</InputGroup>
 			<Modal
