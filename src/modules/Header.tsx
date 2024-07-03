@@ -133,6 +133,7 @@ export const Header: React.FC = () => {
 							<HeaderMobileButtons
 								user={user}
 								username={username}
+								openCreatePost={onOpen}
 							/>
 						) : (
 							<SignInButton />
@@ -182,14 +183,17 @@ const UserAvatarButton: React.FC<UserAvatarButtonProps> = ({
 interface HeaderButtonsProps {
 	user: IUser;
 	username: string;
+	openCreatePost: () => void;
 }
 
 const HeaderMobileButtons: React.FC<HeaderButtonsProps> = ({
 	user,
 	username,
+	openCreatePost,
 }) => {
 	const { toggleColorMode } = useColorMode();
 	const btnBg = useColorModeValue(...CM_BUTTON_MAIN);
+	const bgColorContrast = useColorModeValue(...CM_BUTTON_CONTRAST);
 	const btnColor = useColorModeValue(...CM_TEXT);
 	const darkModeIcon = useColorModeValue(<MoonIcon />, <SunIcon />);
 
@@ -222,7 +226,7 @@ const HeaderMobileButtons: React.FC<HeaderButtonsProps> = ({
 						<Link href={`/${username}`}>
 							<Button
 								as={"div"}
-								backgroundColor={btnBg}
+								backgroundColor={bgColorContrast}
 								color={btnColor}
 								leftIcon={<AddIcon color={btnColor} />}
 							>
@@ -244,15 +248,27 @@ const HeaderMobileButtons: React.FC<HeaderButtonsProps> = ({
 					<SignOutButton />
 				</MenuItem>
 				{!isDesktop && (
-					<MenuItem background={"transparent"}>
-						<IconButton
-							as={"div"}
-							aria-label="toggle color mode"
-							background={"transparent"}
-							icon={darkModeIcon}
-							onClick={toggleColorMode}
-						/>
-					</MenuItem>
+					<>
+						<MenuItem background={"transparent"}>
+							<Button
+								backgroundColor={bgColorContrast}
+								color={btnColor}
+								leftIcon={<AddIcon color={btnColor} />}
+								onClick={openCreatePost}
+							>
+								New Post
+							</Button>
+						</MenuItem>
+						<MenuItem background={"transparent"}>
+							<IconButton
+								as={"div"}
+								aria-label="toggle color mode"
+								background={"transparent"}
+								icon={darkModeIcon}
+								onClick={toggleColorMode}
+							/>
+						</MenuItem>
+					</>
 				)}
 			</MenuList>
 		</Menu>

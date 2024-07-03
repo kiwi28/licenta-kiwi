@@ -11,6 +11,7 @@ export const SignInButton = () => {
 	const signInWithGoogle = async () => {
 		const result = await signInWithPopup(auth, googleAuthProvider);
 		if (result?.user) {
+			console.log("User signed in with Google", result);
 			router.push("/register");
 		}
 	};
